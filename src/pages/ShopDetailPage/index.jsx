@@ -10,6 +10,8 @@ const withBase = (path = "") => {
 const DEFAULT_MAP_SRC = withBase("Etc/all@4x.png");
 const FALLBACK_MAP_SVG = withBase("svg/all.svg");
 const DEFAULT_SHOP_IMAGE = withBase("Etc/noimage@4x.png");
+const HEADER_LOGO_BLACK_ENG = withBase("4x/black eng@4x.png");
+const HEADER_LOGO_BLACK_KOR = withBase("4x/black kor@4x.png");
 
 const ShopDetailPageComponent = () => {
     const { shopName } = useParams();
@@ -511,7 +513,7 @@ export default ShopDetailPage;
 // Header logo component (hover swap EN ↔ KO, click → Section 2 on Landing)
 function HeaderLogo() {
   const navigate = useNavigate();
-  const [imgSrc, setImgSrc] = useState("/4x/black eng@4x.png");
+  const [imgSrc, setImgSrc] = useState(HEADER_LOGO_BLACK_ENG);
 
   const handleClick = () => {
     try { sessionStorage.setItem('jumpToSection2', '1'); } catch {}
@@ -524,8 +526,8 @@ function HeaderLogo() {
       alt="Seoul Tourism Map"
       className="h-auto w-auto max-w-[15%] cursor-pointer mt-8 block"
       onClick={handleClick}
-      onMouseEnter={() => setImgSrc("/4x/black kor@4x.png")}
-      onMouseLeave={() => setImgSrc("/4x/black eng@4x.png")}
+      onMouseEnter={() => setImgSrc(HEADER_LOGO_BLACK_KOR)}
+      onMouseLeave={() => setImgSrc(HEADER_LOGO_BLACK_ENG)}
     />
   );
 }
