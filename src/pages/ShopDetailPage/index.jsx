@@ -2,6 +2,15 @@ import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { shops } from "../../shopsData.js";
 import { useMemo, memo, useEffect, useState, useCallback, useRef } from "react";
 
+const withBase = (path = "") => {
+    const base = import.meta.env.BASE_URL || "/";
+    return `${base.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+};
+
+const DEFAULT_MAP_SRC = withBase("Etc/all@4x.png");
+const FALLBACK_MAP_SVG = withBase("svg/all.svg");
+const DEFAULT_SHOP_IMAGE = withBase("Etc/noimage@4x.png");
+
 const ShopDetailPageComponent = () => {
     const { shopName } = useParams();
     const decodedShopName = decodeURIComponent(shopName);
@@ -164,7 +173,7 @@ const ShopDetailPageComponent = () => {
       const list = [];
       for (const v of variants) {
         for (const e of exts) {
-          list.push(`/4x/${v}${e}`);
+          list.push(withBase(`4x/${v}${e}`));
         }
       }
       return list;
@@ -176,14 +185,14 @@ const ShopDetailPageComponent = () => {
       if (candidates.length) {
         setMapSrc(candidates[0]);
       } else {
-        setMapSrc('/Etc/all@4x.png');
+        setMapSrc(DEFAULT_MAP_SRC);
       }
     };
 
     // ==== Landing page menu parity: states & helpers ====
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedRegion, setSelectedRegion] = useState(null);
-    const [mapSrc, setMapSrc] = useState('/Etc/all@4x.png');
+    const [mapSrc, setMapSrc] = useState(() => DEFAULT_MAP_SRC);
 
     const categories = useMemo(() => Array.from(new Set(shops.map(s => s.category))), []);
     const uniqueRegions = useMemo(() => Array.from(new Set(shops.map(s => s.region))).filter(Boolean), []);
@@ -223,9 +232,9 @@ const ShopDetailPageComponent = () => {
 
     useEffect(() => {
       if (isRegionOpen) {
-        setMapSrc('/Etc/all@4x.png');
+        setMapSrc(DEFAULT_MAP_SRC);
       }
-    }, [isRegionOpen]);
+    }, [isRegionOpen, DEFAULT_MAP_SRC]);
 
     const shop = shops.find(
         (s) => s.name.toLowerCase() === decodedShopName.toLowerCase()
@@ -341,7 +350,7 @@ const ShopDetailPageComponent = () => {
                                 <div className="flex flex-wrap items-center gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => { setSelectedRegion(null); setMapSrc('/Etc/all@4x.png'); }}
+                                        onClick={() => { setSelectedRegion(null); setMapSrc(DEFAULT_MAP_SRC); }}
                                         className="inline-flex items-center gap-2 bg-black text-white rounded-full px-3 py-1 text-xs hover:opacity-80"
                                         aria-label={`Remove ${selectedRegion}`}
                                     >
@@ -360,7 +369,7 @@ const ShopDetailPageComponent = () => {
                                 <button
                                   type="button"
                                   className="w-full h-[52px] flex items-center justify-center rounded-md hover:bg-zinc-100 hover:font-bold leading-tight cursor-pointer"
-                                  onClick={() => { setSelectedRegion(null); setMapSrc('/Etc/all@4x.png'); }}
+                                  onClick={() => { setSelectedRegion(null); setMapSrc(DEFAULT_MAP_SRC); }}
                                 >
                                   전체
                                 </button>
@@ -402,10 +411,10 @@ const ShopDetailPageComponent = () => {
                                       t.index += 1;
                                       setMapSrc(t.candidates[t.index]);
                                     } else {
-                                      if (mapSrc !== "/Etc/all@4x.png") {
-                                        setMapSrc("/Etc/all@4x.png");
-                                      } else if (mapSrc !== "/svg/all.svg") {
-                                        setMapSrc("/svg/all.svg");
+                                      if (mapSrc !== DEFAULT_MAP_SRC) {
+                                        setMapSrc(DEFAULT_MAP_SRC);
+                                      } else if (mapSrc !== FALLBACK_MAP_SVG) {
+                                        setMapSrc(FALLBACK_MAP_SVG);
                                       }
                                     }
                                   }}
@@ -601,11 +610,11 @@ function ShopImageToggle({ shop }) {
     const exts = ['.png', '.PNG', '.jpg', '.JPG', '.jpeg', '.JPEG', '.webp', '.WEBP'];
     const list = [];
     for (const b of bases) {
-      const raw = `/shopImage/${b}${idx}`;
-      const enc = `/shopImage/${encodeURIComponent(b)}${idx}`;
+      const raw = `shopImage/${b}${idx}`;
+      const enc = `shopImage/${encodeURIComponent(b)}${idx}`;
       for (const e of exts) {
-        list.push(raw + e);
-        list.push(enc + e);
+        list.push(withBase(raw + e));
+        list.push(withBase(enc + e));
       }
     }
     return list;
@@ -616,7 +625,7 @@ function ShopImageToggle({ shop }) {
     setImageIndex(1);
     const candidates = buildCandidates(shop.name, 1);
     tryRef.current = { list: candidates, i: 0 };
-    setSrc(candidates[0] || "/Etc/noimage@4x.png");
+    setSrc(candidates[0] || DEFAULT_SHOP_IMAGE);
   }, [shop.name, buildCandidates]);
 
   // 호버 시 1↔2 전환 + 해당 인덱스 후보들로 교체
@@ -624,7 +633,7 @@ function ShopImageToggle({ shop }) {
     setImageIndex(idx);
     const candidates = buildCandidates(shop.name, idx);
     tryRef.current = { list: candidates, i: 0 };
-    setSrc(candidates[0] || "/Etc/noimage@4x.png");
+    setSrc(candidates[0] || DEFAULT_SHOP_IMAGE);
   }, [shop.name, buildCandidates]);
 
   const handleMouseEnter = () => applyIndex(imageIndex === 1 ? 2 : 1);
@@ -637,7 +646,7 @@ function ShopImageToggle({ shop }) {
       t.i += 1;
       setSrc(t.list[t.i]);
     } else {
-      if (src !== "/Etc/noimage@4x.png") setSrc("/Etc/noimage@4x.png");
+      if (src !== DEFAULT_SHOP_IMAGE) setSrc(DEFAULT_SHOP_IMAGE);
       // 콘솔에서 어떤 후보들을 시도했는지 확인 가능
       console.warn('[ShopImageToggle] No match for', shop.name, t?.list);
     }

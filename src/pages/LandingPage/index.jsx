@@ -2,12 +2,26 @@ import { Link, useLocation } from "react-router-dom";
 import { shops } from "../../shopsData.js";
 import { useState, useEffect, useRef } from "react";
 
+const withBase = (path = "") => {
+    const base = import.meta.env.BASE_URL || "/";
+    return `${base.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+};
+
+const DEFAULT_MAP_SRC = withBase("Etc/all@4x.png");
+const FALLBACK_MAP_SVG = withBase("svg/all.svg");
+const HERO_TITLE_ENG = withBase("4x/white eng@4x.png");
+const HERO_TITLE_KOR = withBase("4x/white kor@4x.png");
+const HERO_LOGO_BLACK_ENG = withBase("4x/black eng@4x.png");
+const HERO_LOGO_BLACK_KOR = withBase("4x/black kor@4x.png");
+const SEARCH_ICON = withBase("search-icon.svg");
+const LANDING_DIR_ENC = withBase("landing%20first");
+
 const LandingPage = () => {
     const location = useLocation();
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [mapSrc, setMapSrc] = useState("/Etc/all@4x.png");
+    const [mapSrc, setMapSrc] = useState(DEFAULT_MAP_SRC);
 
     // ---- Region utilities ----
     const regionSlug = (name) => {
@@ -162,7 +176,7 @@ const LandingPage = () => {
       setIsRegionOpen(prev => {
         const next = !prev;
         if (next) {
-          setMapSrc('/Etc/all@4x.png');
+          setMapSrc(DEFAULT_MAP_SRC);
         }
         return next;
       });
@@ -267,7 +281,7 @@ const LandingPage = () => {
       const list = [];
       for (const v of variants) {
         for (const e of exts) {
-          list.push(`/4x/${v}${e}`);
+          list.push(withBase(`4x/${v}${e}`));
         }
       }
       return list;
@@ -279,16 +293,14 @@ const LandingPage = () => {
       if (candidates.length) {
         setMapSrc(candidates[0]);
       } else {
-        setMapSrc('/Etc/all@4x.png');
+        setMapSrc(DEFAULT_MAP_SRC);
       }
     };
 
     // ---- Section 1 (hero) setup ----
     const SECTION2_ID = 'section-2';
     // Filesystem: /Users/junhyeok/Desktop/seoul/public/landing first
-    // Served path from public/: /landing first
-    const LANDING_DIR = '/landing first';
-    const LANDING_DIR_ENC = '/landing%20first'; // encoded space for safe URL loading
+    // Served path from public/: `${import.meta.env.BASE_URL}landing first`
     // timing: hold 3s, fade 3s (slow crossfade)
     const HOLD_MS = 3000;
     const FADE_MS = 3000;
@@ -460,7 +472,7 @@ function noteUserActivity(event) {
         }
         if (chosen) found.push(chosen);
       }
-      return found.length ? found : ['/Etc/all@4x.png'];
+      return found.length ? found : [DEFAULT_MAP_SRC];
     };
 
     const startCycle = () => {
@@ -501,7 +513,7 @@ function noteUserActivity(event) {
     const handleHeroError = (badSrc) => {
       setHeroImages(prev => {
         const filtered = prev.filter(src => src !== badSrc);
-        if (!filtered.length) return ['/Etc/all@4x.png'];
+        if (!filtered.length) return [DEFAULT_MAP_SRC];
         const cur = Math.min(idxRef.current, filtered.length - 1);
         idxRef.current = cur;
         return filtered;
@@ -700,7 +712,7 @@ function noteUserActivity(event) {
         setRegionMap(region);
       } else {
         setSelectedRegion(null);
-        setMapSrc('/Etc/all@4x.png');
+        setMapSrc(DEFAULT_MAP_SRC);
       }
 
       // Reset page (do not forcibly close dropdowns)
@@ -759,7 +771,7 @@ function noteUserActivity(event) {
             const [isTitleHover, setIsTitleHover] = useState(false);
             return (
               <img
-                src={isTitleHover ? "/4x/white kor@4x.png" : "/4x/white eng@4x.png"}
+                src={isTitleHover ? HERO_TITLE_KOR : HERO_TITLE_ENG}
                 alt="Seoul Tourism Map for Koreans"
                 className="absolute top-8 left-8 z-30 h-auto w-auto max-w-[15%] pointer-events-auto cursor-pointer"
                 onMouseEnter={() => setIsTitleHover(true)}
@@ -780,7 +792,7 @@ function noteUserActivity(event) {
 }}
             onError={(e) => {
               handleHeroError(e.currentTarget.src);
-              e.currentTarget.src = '/Etc/all@4x.png';
+              e.currentTarget.src = DEFAULT_MAP_SRC;
             }}
           />
           {/* Overlay image (fades in) */}
@@ -795,7 +807,7 @@ function noteUserActivity(event) {
             }}
             onError={(e) => {
               handleHeroError(e.currentTarget.src);
-              e.currentTarget.src = '/Etc/all@4x.png';
+              e.currentTarget.src = DEFAULT_MAP_SRC;
             }}
           />
           {/* Top gradient (full-width, top-to-bottom black) */}
@@ -833,7 +845,7 @@ function noteUserActivity(event) {
                 <div className="flex items-center justify-between mt-8">
                   {/* Title image with hover effect */}
                   {(() => {
-                    const [imgSrc, setImgSrc] = useState("/4x/black eng@4x.png");
+                    const [imgSrc, setImgSrc] = useState(HERO_LOGO_BLACK_ENG);
                     // Handler for click: same as original div
                     const handleClick = () => {
                       setSelectedCategories([]);
@@ -860,8 +872,8 @@ function noteUserActivity(event) {
                         alt="Seoul Tourism Map"
                         className="h-auto w-auto max-w-[15%] cursor-pointer"
                         onClick={handleClick}
-                        onMouseEnter={() => setImgSrc("/4x/black kor@4x.png")}
-                        onMouseLeave={() => setImgSrc("/4x/black eng@4x.png")}
+                        onMouseEnter={() => setImgSrc(HERO_LOGO_BLACK_KOR)}
+                        onMouseLeave={() => setImgSrc(HERO_LOGO_BLACK_ENG)}
                         style={{ fontWeight: 700, fontSize: '36px' }}
                       />
                     );
@@ -880,7 +892,7 @@ function noteUserActivity(event) {
                       </div>
                     )}
                     <img
-                      src="/search-icon.svg"
+                      src={SEARCH_ICON}
                       alt="Search Icon"
                       className="w-[32px] h-[32px] cursor-pointer hover:opacity-80"
                       onClick={() => setIsSearchOpen(prev => !prev)}
@@ -980,7 +992,7 @@ function noteUserActivity(event) {
                       <div className="flex flex-wrap items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => { setSelectedRegion(null); setMapSrc('/Etc/all@4x.png'); }}
+                          onClick={() => { setSelectedRegion(null); setMapSrc(DEFAULT_MAP_SRC); }}
                           className="inline-flex items-center gap-2 bg-black text-white rounded-full px-3 py-1 text-xs hover:opacity-80"
                           aria-label={`Remove ${selectedRegion}`}
                         >
@@ -1000,7 +1012,7 @@ function noteUserActivity(event) {
           className="w-full h-[52px] flex items-center justify-center rounded-md hover:bg-zinc-100 hover:font-bold leading-tight cursor-pointer text-[16px]"
           onClick={() => {
             setSelectedRegion(null);
-            setMapSrc('/Etc/all@4x.png');
+            setMapSrc(DEFAULT_MAP_SRC);
           }}
         >
           전체
@@ -1052,10 +1064,10 @@ function noteUserActivity(event) {
               setMapSrc(t.candidates[t.index]);
             } else {
               // ultimate fallbacks
-              if (mapSrc !== "/all@4x.png") {
-                setMapSrc("/all@4x.png");
-              } else if (mapSrc !== "/svg/all.svg") {
-                setMapSrc("/svg/all.svg");
+              if (mapSrc !== DEFAULT_MAP_SRC) {
+                setMapSrc(DEFAULT_MAP_SRC);
+              } else if (mapSrc !== FALLBACK_MAP_SVG) {
+                setMapSrc(FALLBACK_MAP_SVG);
               }
             }
           }}
