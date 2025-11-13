@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important; /* 파랑 배경을 없애기 위해 box-shadow를 none으로 설정 */
+    box-shadow: 0 0 0 30px white inset !important; /* 일부 브라우저에 대응하기 위해 box-shadow를 none으로 설정 */
+}
+
+
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox  */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 900;
+    font-display: swap;
+    src: local("SUIT Black"), url(./woff2/SUIT-Black.woff2) format("woff2"), url(./woff/SUIT-Black.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 800;
+    font-display: swap;
+    src: local("SUIT ExtraBold"), url(./woff2/SUIT-ExtraBold.woff2) format("woff2"), url(./woff/SUIT-ExtraBold.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 700;
+    font-display: swap;
+    src: local("SUIT Bold"), url(./woff2/SUIT-Bold.woff2) format("woff2"), url(./woff/SUIT-Bold.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 600;
+    font-display: swap;
+    src: local("SUIT SemiBold"), url(./woff2/SUIT-SemiBold.woff2) format("woff2"), url(./woff/SUIT-SemiBold.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 500;
+    font-display: swap;
+    src: local("SUIT Medium"), url(./woff2/SUIT-Medium.woff2) format("woff2"), url(./woff/SUIT-Medium.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 400;
+    font-display: swap;
+    src: local("SUIT Regular"), url(./woff2/SUIT-Regular.woff2) format("woff2"), url(./woff/SUIT-Regular.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 300;
+    font-display: swap;
+    src: local("SUIT Light"), url(./woff2/SUIT-Light.woff2) format("woff2"), url(./woff/SUIT-Light.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 200;
+    font-display: swap;
+    src: local("SUIT ExtraLight"), url(./woff2/SUIT-ExtraLight.woff2) format("woff2"), url(./woff/SUIT-ExtraLight.woff) format("woff");
+}
+
+@font-face {
+    font-family: "SUIT";
+    font-weight: 100;
+    font-display: swap;
+    src: local("SUIT Thin"), url(./woff2/SUIT-Thin.woff2) format("woff2"), url(./woff/SUIT-Thin.woff) format("woff");
+}
+
+div {
+    white-space: pre-line;
+    word-break: keep-all;
+}
+
+/* 기본 Tailwind sans 폰트를 SUIT로 강제 설정 */
+html {
+    font-family: "SUIT", sans-serif;
+}
